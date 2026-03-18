@@ -1,0 +1,14 @@
+metadata:
+  name: "Ensure database has a valid DataClassification tag"
+  id: "CUSTOM_AWS_TAG_001"
+  category: "TAGGING"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_db_instance"
+  attribute: "tags.DataClassification"
+  operator: "within"
+  value:
+    - "Public"
+    - "Internal"
+    - "Confidential"

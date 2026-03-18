@@ -1,0 +1,31 @@
+name: "IaC Security Guardrail"
+
+# 1. THE TRIGGER: Run this every time a developer opens a Pull Request to 'main'
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  checkov-scan:
+    name: "Checkov Security Scan"
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 2. PULL THE CODE: Get the developer's Terraform files
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 3. SET UP PYTHON: We need Python to run Checkov
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 4. INSTALL CHECKOV: Install our security tool
+      - name: Install Checkov
+        run: pip install checkov
+
+      # 5. RUN THE SCAN: Scan the code using both standard and custom rules!
+      - name: Run Checkov Scan
+        run: |
+          checkov -f main.tf --external-checks-dir custom_policies
