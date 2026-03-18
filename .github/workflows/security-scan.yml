@@ -1,0 +1,33 @@
+name: "IaC Security Guardrail"
+
+# THE TRIGGER: Run this every time code is pushed to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  checkov-scan:
+    name: "Checkov Security Scan"
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Pulls your code from GitHub into the temporary runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Installs Python so we can run Checkov
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Installs the Checkov tool
+      - name: Install Checkov
+        run: pip install checkov
+
+      # Runs the scan against your main.tf using your custom policy folder
+      - name: Run Checkov Scan
+        run: |
+          checkov -f main.tf --external-checks-dir custom_policies
